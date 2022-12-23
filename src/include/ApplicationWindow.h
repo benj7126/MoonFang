@@ -11,6 +11,8 @@
 #include <string.h>
 #include <vector>
 
+#include <cairo/cairo.h>
+
 class ApplicationWindow {
 private:
     Display *display;
@@ -23,6 +25,9 @@ private:
 
     Terminal t;
     Atom DeleteWindowMessage;
+
+    cairo_surface_t* CS;
+    cairo_t* CR;
 
 public:
     ApplicationWindow();
