@@ -30,11 +30,28 @@ ApplicationWindow::ApplicationWindow(){
     XClassHint ch = {Name, Name};
 
     XSetClassHint(display, window, &ch);
+
+    // Handle the close window event to stop WM from forcefully crashing
+    // program.
+    DeleteWindowMessage = XInternAtom(display, "WM_DELETE_WINDOW", False);
+    XSetWMProtocols(display, window, &DeleteWindowMessage, 1);
+
 }
 
 void ApplicationWindow::Start(){
-    while (1) {
-        
+    XEvent Event;
+
+    bool KeepRunning = true;
+    while (KeepRunning) {
+        XNextEvent(display, &Event);
+
+        if(Event.type == ClientMessage) {
+            if((Atom)Event.xclient.data.l[0] == DeleteWindowMessage) {
+                KeepRunning = false;
+            }
+        }
+
+        XFlush(display);
     }
 
     XCloseDisplay(display);

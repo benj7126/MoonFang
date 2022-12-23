@@ -15,6 +15,8 @@ private:
     XEvent event;
     int s;
 
+    Atom DeleteWindowMessage;
+
 public:
     ApplicationWindow();
     void Start();
