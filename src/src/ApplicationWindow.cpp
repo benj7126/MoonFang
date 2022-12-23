@@ -33,12 +33,11 @@ ApplicationWindow::ApplicationWindow() {
 
     im = XOpenIM(display, NULL, NULL, NULL);
     ic = XCreateIC(im, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, XNClientWindow, window, NULL);
-    
+
     XSetICFocus(ic);
 }
 
-std::string convertToString(char* a, int size)
-{
+std::string convertToString(char *a, int size) {
     int i;
     std::string s = "";
     for (i = 0; i < size; i++) {
@@ -48,14 +47,15 @@ std::string convertToString(char* a, int size)
 }
 
 void ApplicationWindow::Start() {
-    while (1) {
+    bool KeepRunning = true;
+    while (KeepRunning) {
         while (XPending(display)) {
             XNextEvent(display, &event);
             if (XFilterEvent(&event, window))
                 continue;
 
             switch (event.type) {
-                case KeyPress:
+                case KeyPress: {
                     int count     = 0;
                     KeySym keysym = 0;
                     char buf[20];
@@ -74,7 +74,14 @@ void ApplicationWindow::Start() {
                     }
                     printf("pressed KEY: %d\n", (int) keysym);
 
-                    t.str+=convertToString(buf, count);
+                    t.str += convertToString(buf, count);
+                    break;
+                }
+
+                case ClientMessage:
+                    if ((Atom) event.xclient.data.l[0] == DeleteWindowMessage) {
+                        KeepRunning = false;
+                    }
                     break;
             }
         }
@@ -82,6 +89,9 @@ void ApplicationWindow::Start() {
         //std::cout << charBuffer->size() << std::endl;
         XDrawString(display, window, DefaultGC(display, s), 50, 50, t.str.c_str(), t.str.size());
     }
+
+    DeleteWindowMessage = XInternAtom(display, "WM_DELETE_WINDOW", False);
+    XSetWMProtocols(display, window, &DeleteWindowMessage, 1);
 
     XCloseDisplay(display);
 }

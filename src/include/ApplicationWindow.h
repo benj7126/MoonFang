@@ -22,6 +22,7 @@ private:
     XIC ic;
 
     Terminal t;
+    Atom DeleteWindowMessage;
 
 public:
     ApplicationWindow();
