@@ -1,13 +1,14 @@
 #pragma once
 
-#include "string"
+#include <string>
 #include <vector>
+#include <memory>
 
 #include <cairo/cairo-xlib-xrender.h>
 #include <cairo/cairo-xlib.h>
 #include <X11/extensions/Xrender.h>
 
-
+#include "Graphics/Canvas.h"
 
 class Terminal{
 private:
@@ -24,6 +25,6 @@ private:
    
 public:
     void PressChar(std::string inpString, int keysym, int status);
-    void Draw(cairo_t* CR);
+    void Draw(std::shared_ptr<Graphics::Canvas> CV);
     bool SetTermProperties(int _x, int _y, int _width, int _height);
 };
