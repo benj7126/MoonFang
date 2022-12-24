@@ -31,6 +31,6 @@ set_target_properties(MoonFang PROPERTIES
   CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF)
 
-target_include_directories(MoonFang PRIVATE include ${X11_INCLUDE_DIR} ${CAIRO_INCLUDE_DIR})
+target_include_directories(MoonFang PRIVATE include ${X11_INCLUDE_DIR} ${CAIRO_INCLUDE_DIR} ${PANGO_INCLUDE_DIR})
 
-target_link_libraries(MoonFang ${X11_LIBRARIES} ${CAIRO_LIBRARIES})
+target_link_libraries(MoonFang ${X11_LIBRARIES} ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} Xrender)

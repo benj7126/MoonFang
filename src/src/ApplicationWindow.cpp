@@ -8,6 +8,10 @@
 #include <stdexcept>
 #include <string>
 
+#include <cairo/cairo-xlib.h>
+#include <cairo/cairo-xlib-xrender.h>
+#include <X11/extensions/Xrender.h>
+
 unsigned long _RGB(int r, int g, int b) { return b + (g << 8) + (r << 16); }
 
 ApplicationWindow::ApplicationWindow() {
@@ -52,7 +56,7 @@ ApplicationWindow::ApplicationWindow() {
 
     XWindowAttributes WinAttr;
     XGetWindowAttributes(display, window, &WinAttr);
-    CS = cairo_xlib_surface_create(display, window, WinAttr.visual, 100, 100);
+    CS = cairo_xlib_surface_create_with_xrender_format(display, window, WinAttr.screen, XRenderFindStandardFormat(display, PictStandardRGB24), 100, 100);
     CR = cairo_create(CS);
 }
 
@@ -112,8 +116,11 @@ void ApplicationWindow::Start() {
         cairo_select_font_face(CR, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
         cairo_set_font_size(CR, 90.0);
 
+        cairo_font_options_t *font_options = cairo_font_options_create ();
+
         cairo_move_to(CR, 10.0, 500.0);
         cairo_show_text(CR, t.str.c_str());
+
 
         cairo_pattern_t *pat;
 
