@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "Graphics/CairoPango/Canvas_CairoPango.h"
+
 unsigned long _RGB(int r, int g, int b) { return b + (g << 8) + (r << 16); }
 
 ApplicationWindow::ApplicationWindow() {
@@ -52,8 +54,7 @@ ApplicationWindow::ApplicationWindow() {
 
     XWindowAttributes WinAttr;
     XGetWindowAttributes(display, window, &WinAttr);
-    CS = cairo_xlib_surface_create_with_xrender_format(display, window, WinAttr.screen, XRenderFindStandardFormat(display, PictStandardARGB32), 100, 100);
-    CR = cairo_create(CS);
+    CV = std::make_shared<Graphics::Canvas_CairoPango>(display, window, WinAttr.screen, XRenderFindStandardFormat(display, PictStandardARGB32));
 }
 
 std::string convertToString(char *a, int size) {
@@ -82,7 +83,7 @@ void ApplicationWindow::Start() {
 
             switch (event.type) {
                 case Expose: {
-                    cairo_xlib_surface_set_size(CS, event.xexpose.width, event.xexpose.height);
+                    CV->SetSize(event.xexpose.width, event.xexpose.height);
                     break;
                 }
                 case KeyPress: {
@@ -122,7 +123,7 @@ void ApplicationWindow::Start() {
 
         if (reDraw) {
             XClearWindow(display, window);
-            t.Draw(CR);
+            t.Draw(CV);
         }
 
 

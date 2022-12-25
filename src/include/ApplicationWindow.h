@@ -10,8 +10,9 @@
 #include <thread>
 #include <string.h>
 #include <vector>
+#include <memory>
 
-#include <cairo/cairo.h>
+#include "Graphics/Canvas.h"
 
 class ApplicationWindow {
 private:
@@ -26,8 +27,7 @@ private:
     Terminal t;
     Atom DeleteWindowMessage;
 
-    cairo_surface_t* CS;
-    cairo_t* CR;
+    std::shared_ptr<Graphics::Canvas> CV;
 
 public:
     ApplicationWindow();
