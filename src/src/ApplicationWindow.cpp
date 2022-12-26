@@ -55,6 +55,8 @@ ApplicationWindow::ApplicationWindow() {
     XWindowAttributes WinAttr;
     XGetWindowAttributes(display, window, &WinAttr);
     CV = std::make_shared<Graphics::Canvas_CairoPango>(display, window, WinAttr.screen, XRenderFindStandardFormat(display, PictStandardARGB32));
+
+    //pt = {ConnectionNumber(display)};
 }
 
 std::string convertToString(char *a, int size) {
@@ -74,6 +76,8 @@ void ApplicationWindow::Start() {
         XGetWindowAttributes(display, window, &attr);
         if (t.SetTermProperties(attr.x, attr.y, attr.width, attr.height))
                 reDraw = true;
+
+        t.Update();
 
         while (XPending(display)) {
             XNextEvent(display, &event);

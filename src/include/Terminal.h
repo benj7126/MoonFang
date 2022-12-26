@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PT.h"
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -12,6 +14,8 @@
 
 class Terminal{
 private:
+    PT pt;
+
     std::vector<std::string> lines;
     std::string curString;
 
@@ -27,4 +31,5 @@ public:
     void PressChar(std::string inpString, int keysym, int status);
     void Draw(std::shared_ptr<Graphics::Canvas> CV);
     bool SetTermProperties(int _x, int _y, int _width, int _height);
+    void Update();
 };

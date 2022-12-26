@@ -24,9 +24,9 @@ void Terminal::Draw(std::shared_ptr<Graphics::Canvas> CV) {
         for (char c : line) {
             auto TextInfo = CV->DrawText(std::string{c});
 
-            x += ((double)TextInfo.Width/PANGO_SCALE);
+            x += ((double) TextInfo.Width / PANGO_SCALE);
             CV->SetPos(x, y);
-            if (x >= width-12) {
+            if (x >= width - 12) {
                 x = 5;
                 y += 20;
                 CV->SetPos(x, y);
@@ -49,4 +49,15 @@ bool Terminal::SetTermProperties(int _x, int _y, int _width, int _height) {
     height = _height;
 
     return changed;
+}
+
+void Terminal::Update() {
+    while (1) {
+        char inp = pt.GetPTInput();
+
+        if (pt.ignore){
+            pt.ignore = false;
+            return;
+        }
+    }
 }
