@@ -59,15 +59,6 @@ ApplicationWindow::ApplicationWindow() {
     //pt = {ConnectionNumber(display)};
 }
 
-std::string convertToString(char *a, int size) {
-    int i;
-    std::string s = "";
-    for (i = 0; i < size; i++) {
-        s = s + a[i];
-    }
-    return s;
-}
-
 void ApplicationWindow::Start() {
     bool reDraw      = true;
     bool KeepRunning = true;
@@ -109,7 +100,7 @@ void ApplicationWindow::Start() {
                     }
                     printf("pressed KEY: %d\n", (int) keysym);
 
-                    std::string conv = convertToString(buf, count);
+                    std::string conv = std::string{buf, (size_t)count};
                     if (count > 0 && conv != "" && status == 4)
                         t.PressChar(conv, (int)keysym, (int)status);
 
