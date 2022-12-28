@@ -16,7 +16,7 @@ protected:
 
 public:
     SubToken(std::vector<char>& chars, std::vector<int>& savedValues, std::string& curSaveValue);
-    virtual void AddChar(char c);
-    virtual bool IsDone();
+    virtual void AddChar(char c) = 0;
+    virtual bool IsDone() = 0;
 
 };
