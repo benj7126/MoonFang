@@ -23,10 +23,6 @@ namespace Graphics {
     DrawTextRet Canvas_CairoPango::DrawText(int x, int y, std::string Text) {
         cairo_move_to(CR, x, y);
 
-        return DrawText(Text);
-    }
-
-    DrawTextRet Canvas_CairoPango::DrawText(std::string Text) {
         PangoLayout *layout = pango_cairo_create_layout(CR);
         PangoFontDescription *desc = pango_font_description_from_string(Font.c_str());
         pango_layout_set_font_description(layout, desc);
@@ -41,29 +37,14 @@ namespace Graphics {
         int tW, tH;
         pango_layout_get_size (layout, &tW, &tH);
 
-        return {tW,tH};
+        double tWD, tHD;
+        tWD = ((double)tW / PANGO_SCALE);
+        tHD = ((double)tW / PANGO_SCALE);
+
+        return {tWD,tHD};
     }
 
     void Canvas_CairoPango::SetSize(int width, int height) {
         cairo_xlib_surface_set_size(CS, width, height);
-    }
-
-    void Canvas_CairoPango::SetPos(double x, double y) {
-        cairo_move_to(CR, x, y);
-    }
-
-    GetPosRet Canvas_CairoPango::GetPos() {
-        double x, y;
-
-        cairo_get_current_point(CR, &x, &y);
-
-        return {x, y};
-    }
-
-    void Canvas_CairoPango::GetPos(double& x, double& y) {
-        double tX, tY;
-        cairo_get_current_point(CR, &tX, &tY);
-        x = tX;
-        y = tY;
     }
 }
