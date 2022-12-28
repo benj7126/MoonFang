@@ -34,7 +34,7 @@ PT::PT() {
         dup2(slave, 2);
         close(slave);
 
-        execle("/bin/bash", "/bin/bash", (char*)NULL);
+        execl("/bin/bash", "/bin/bash", (char*)NULL);
         exit(1);
         return;
     }
@@ -47,11 +47,9 @@ PT::PT() {
 }
 
 char PT::GetPTInput(){
-    std::cout<<"inp"<<std::endl;
     char buf;
     if (poll(&pfd, 1, 0)){
         read(master, &buf, 1);
-        std::cout << "buf: " << buf << std::endl;
         return buf;
     }
 

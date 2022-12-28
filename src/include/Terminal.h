@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PT.h"
+#include "Token.h"
 
 #include <string>
 #include <vector>
@@ -15,6 +16,8 @@
 class Terminal{
 private:
     PT pt;
+
+    Token token;
 
     std::vector<std::string> lines;
     std::string curString;
@@ -32,4 +35,5 @@ public:
     void Draw(std::shared_ptr<Graphics::Canvas> CV);
     bool SetTermProperties(int _x, int _y, int _width, int _height);
     void Update();
+
 };

@@ -3,7 +3,6 @@
 #include <iostream>
 #include <pango/pangocairo.h>
 
-
 void Terminal::PressChar(std::string inpString, int keysym, int status) {
     curString += inpString;
     if (keysym == 65293) {// enter
@@ -58,6 +57,14 @@ void Terminal::Update() {
         if (pt.ignore){
             pt.ignore = false;
             return;
+        }
+
+        token.AddChar(inp);
+        if (token.IsEnded()){
+            std::cout << token.type << std::endl;
+            if (token.type == UTF8)
+                curString += std::string{inp};
+            token.Clear();
         }
     }
 }
