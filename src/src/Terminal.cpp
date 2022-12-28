@@ -63,7 +63,7 @@ void Terminal::Update() {
         token.AddChar(inp);
         if (token.IsEnded()){
             std::cout << token.type << std::endl;
-            if (token.type == UTF8)
+            if (token.type == UTF8_T)
                 curString += std::string{inp};
             token.Clear();
         }

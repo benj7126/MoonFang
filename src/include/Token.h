@@ -7,9 +7,9 @@
 #include <memory>
 
 enum TokenType{
-    NONE,
-    ANSI,
-    UTF8,
+    NONE_T,
+    ANSI_T,
+    UTF8_T,
 };
 
 class Token{
@@ -18,7 +18,7 @@ private:
     std::shared_ptr<SubToken> st;
     
 public:
-    TokenType type = NONE;
+    TokenType type = NONE_T;
     std::vector<int> savedValues;
     std::string curSaveValue;
 

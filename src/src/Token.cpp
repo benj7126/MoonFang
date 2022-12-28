@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "SubToken/CSI.h"
+#include "SubToken/UTF8.h"
 
 bool CheckLastCharWithin(std::vector<char> Cs, int min, int max) {
     return (int) Cs.back() >= min && (int) Cs.back() <= max;
@@ -12,39 +13,42 @@ Token::Token() = default;
 
 // return weather char was used or not
 void Token::AddChar(char c) {
+    std::cout << "adding char to chars pre len: " << chars.size() << std::endl;
     if (st != nullptr) {
         st->AddChar(c);
         return;
     }
 
     if (chars.size() == 0) {
-        /* printf("%02hhX\n", c); */
-        /* printf("%02hhX\n", (char)0x1B); */
+        std::cout << c << " <";
         if (c == 0x1B) {
-            type = ANSI;
+            std::cout << " ansi >";
+            type = ANSI_T;
         } else {
-            type = UTF8;
+            std::cout << " utf8 >";
+            type = UTF8_T;
         }
-        chars.push_back(c);
-        return;
+        std::cout << std::endl;
+        printf("%02hhX\n", c);
+        printf("%02hhX\n", (char)0x1B);
     }
 
     switch (type) {
-        case ANSI: {
+        case ANSI_T: {
             st = std::make_shared<CSI>(chars, savedValues, curSaveValue);
             break;
         }
-            /* case UTF8: { */
-            /*     chars.push_back(c); */
-            /*     break; */
-            /* } */
+        case UTF8_T: {
+            st = std::make_shared<UTF8>(chars, savedValues, curSaveValue);
+            break;
+        }
     }
 
     chars.push_back(c);
 }
 
 void Token::Clear() {
-    type = NONE;
+    type = NONE_T;
     chars.clear();
     st = nullptr;
 }
