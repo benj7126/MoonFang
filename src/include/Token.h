@@ -19,7 +19,7 @@ private:
     
 public:
     TokenType type = NONE_T;
-    std::vector<int> savedValues;
+    std::vector<std::string> savedValues;
     std::string curSaveValue;
 
     Token();

@@ -35,7 +35,7 @@ ApplicationWindow::ApplicationWindow() {
     window = XCreateWindow(display, DefaultRootWindow(display), 0, 0, 300, 200, 0, vinfo.depth, InputOutput, vinfo.visual, CWColormap | CWBorderPixel | CWBackPixel, &attr);
     //window = XCreateSimpleWindow(display, RootWindow(display, s), 0, 0, 100, 100, 1, BlackPixel(display, s), WhitePixel(display, s));
 
-    XSelectInput(display, window, ExposureMask|ButtonPressMask|StructureNotifyMask|KeyPressMask|KeyReleaseMask);
+    XSelectInput(display, window, ExposureMask | ButtonPressMask | StructureNotifyMask | KeyPressMask | KeyReleaseMask);
     XMapWindow(display, window);
 
     char Name[]   = "MoonFang";
@@ -54,7 +54,9 @@ ApplicationWindow::ApplicationWindow() {
 
     XWindowAttributes WinAttr;
     XGetWindowAttributes(display, window, &WinAttr);
-    CV = std::make_shared<Graphics::Canvas_CairoPango>(display, window, WinAttr.screen, XRenderFindStandardFormat(display, PictStandardARGB32));
+    gc     = XCreateGC(display, window, 0, NULL);
+    buffer = XCreatePixmap(display, window, 10000, 10000, vinfo.depth);
+    CV     = std::make_shared<Graphics::Canvas_CairoPango>(display, buffer, WinAttr.screen, XRenderFindStandardFormat(display, PictStandardARGB32));
 
     //pt = {ConnectionNumber(display)};
 }
@@ -65,14 +67,16 @@ void ApplicationWindow::Start() {
     XWindowAttributes attr;
     while (KeepRunning) {
         XGetWindowAttributes(display, window, &attr);
-        if (t.SetTermProperties(attr.x, attr.y, attr.width, attr.height))
-                reDraw = true;
+        if (t.SetTermProperties(attr.x, attr.y, attr.width, attr.height)) {
+            reDraw = true;
+        }
 
-        t.Update();
+        if (t.Update())
+            reDraw = true;
 
         while (XPending(display)) {
             XNextEvent(display, &event);
-            if (XFilterEvent(&event, window)){
+            if (XFilterEvent(&event, window)) {
                 continue;
             }
 
@@ -88,6 +92,7 @@ void ApplicationWindow::Start() {
                     Status status = 0;
                     count         = Xutf8LookupString(ic, (XKeyPressedEvent *) &event, buf, 20, &keysym, &status);
 
+                    /*
                     printf("count: %d\n", count);
                     if (status == XBufferOverflow)
                         printf("BufferOverflow\n");
@@ -99,10 +104,11 @@ void ApplicationWindow::Start() {
                         printf("status: %d\n", status);
                     }
                     printf("pressed KEY: %d\n", (int) keysym);
+                    */
 
-                    std::string conv = std::string{buf, (size_t)count};
+                    std::string conv = std::string{buf, (size_t) count};
                     if (count > 0 && conv != "" && status == 4)
-                        t.PressChar(conv, (int)keysym, (int)status);
+                        t.PressChar(conv, (int) keysym, (int) status);
 
                     reDraw = true;
                     break;
@@ -117,14 +123,16 @@ void ApplicationWindow::Start() {
         }
 
         if (reDraw) {
-            XClearWindow(display, window);
             t.Draw(CV);
+            XCopyArea(display, buffer, window, gc, 0, 0, attr.width, attr.height, 0, 0);
+            //XClearArea(display, buffer, 0, 0, attr.width, attr.height, false);
+            XFillRectangle(display, buffer, gc, 0, 0, attr.width, attr.height);
         }
-
 
         //std::cout << charBuffer->size() << std::endl;
         //XDrawString(display, window, DefaultGC(display, s), 50, 50, t.str.c_str(), t.str.size());
 
+        //std::this_thread::sleep_for(std::chrono::milliseconds(10));
         reDraw = false;
     }
 

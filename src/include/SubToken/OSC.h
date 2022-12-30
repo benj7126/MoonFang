@@ -2,9 +2,9 @@
 
 #include "SubToken.h"
 
-class CSI : public SubToken {
+class OSC : public SubToken {
 public:
-    CSI(std::vector<char> &chars, std::vector<std::string> &savedValues, std::string &curSaveValue)
+    OSC(std::vector<char> &chars, std::vector<std::string> &savedValues, std::string &curSaveValue)
         : SubToken(chars, savedValues, curSaveValue) {};
     void AddChar(char c) override;
     bool IsDone() override;

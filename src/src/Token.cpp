@@ -3,39 +3,37 @@
 #include <iostream>
 
 #include "SubToken/CSI.h"
+#include "SubToken/OSC.h"
 #include "SubToken/UTF8.h"
-
-bool CheckLastCharWithin(std::vector<char> Cs, int min, int max) {
-    return (int) Cs.back() >= min && (int) Cs.back() <= max;
-}
 
 Token::Token() = default;
 
 // return weather char was used or not
 void Token::AddChar(char c) {
-    std::cout << "adding char to chars pre len: " << chars.size() << std::endl;
     if (st != nullptr) {
         st->AddChar(c);
         return;
     }
 
     if (chars.size() == 0) {
-        std::cout << c << " <";
         if (c == 0x1B) {
-            std::cout << " ansi >";
             type = ANSI_T;
         } else {
-            std::cout << " utf8 >";
             type = UTF8_T;
         }
-        std::cout << std::endl;
-        printf("%02hhX\n", c);
-        printf("%02hhX\n", (char)0x1B);
     }
 
     switch (type) {
         case ANSI_T: {
-            st = std::make_shared<CSI>(chars, savedValues, curSaveValue);
+            if (chars.size() == 1) {
+                if (c == ']') {
+                    st = std::make_shared<OSC>(chars, savedValues, curSaveValue);
+                } else if (c == '['){
+                    st = std::make_shared<CSI>(chars, savedValues, curSaveValue);
+                } else {
+                    std::cout << c << " is missing asci thingy..." << std::endl;
+                }
+            }
             break;
         }
         case UTF8_T: {
@@ -48,6 +46,13 @@ void Token::AddChar(char c) {
 }
 
 void Token::Clear() {
+    if (type == ANSI_T){
+        std::cout << " getting chars(except first size: " << chars.size() << ") > ";
+        for (int ccount = 1; ccount < chars.size(); ccount++){
+            std::cout << chars.at(ccount);
+        }
+        std::cout << std::endl;
+    }
     type = NONE_T;
     chars.clear();
     st = nullptr;

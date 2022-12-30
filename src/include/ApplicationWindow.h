@@ -21,6 +21,9 @@ private:
     XEvent event;
     int s;
 
+    Pixmap buffer;
+    GC gc;
+
     XIM im;
     XIC ic;
 
