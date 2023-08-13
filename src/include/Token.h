@@ -1,7 +1,6 @@
 #pragma once
 
-#include "SubToken.h"
-
+class SubToken;
 #include <vector>
 #include <string>
 #include <memory>

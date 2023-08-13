@@ -127,12 +127,13 @@ void ApplicationWindow::Start() {
             XCopyArea(display, buffer, window, gc, 0, 0, attr.width, attr.height, 0, 0);
             //XClearArea(display, buffer, 0, 0, attr.width, attr.height, false);
             XFillRectangle(display, buffer, gc, 0, 0, attr.width, attr.height);
+        } else {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100)); // this is slowing the program down, very little, idk if there is a smarter way to fix it though...
         }
 
         //std::cout << charBuffer->size() << std::endl;
         //XDrawString(display, window, DefaultGC(display, s), 50, 50, t.str.c_str(), t.str.size());
 
-        //std::this_thread::sleep_for(std::chrono::milliseconds(10));
         reDraw = false;
     }
 

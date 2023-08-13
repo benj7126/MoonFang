@@ -10,12 +10,17 @@ Token::Token() = default;
 
 // return weather char was used or not
 void Token::AddChar(char c) {
+    // std::cout << c << "   test 3" << type << std::endl;
     if (st != nullptr) {
-        st->AddChar(c);
+        // std::cout << c << "   test 2" << type << std::endl;
+        st->InternalAddChar(c);
         return;
     }
 
-    if (chars.size() == 0) {
+    //type = UTF8_T; // show all, basically...
+    //std::cout << c << "   test " << type << std::endl;
+
+    if (type == NONE_T) {
         if (c == 0x1B) {
             type = ANSI_T;
         } else {
@@ -25,36 +30,39 @@ void Token::AddChar(char c) {
 
     switch (type) {
         case ANSI_T: {
-            if (chars.size() == 1) {
-                if (c == ']') {
-                    st = std::make_shared<OSC>(chars, savedValues, curSaveValue);
-                } else if (c == '['){
-                    st = std::make_shared<CSI>(chars, savedValues, curSaveValue);
-                } else {
-                    std::cout << c << " is missing asci thingy..." << std::endl;
-                }
+            if (c == ']') {
+                st = std::make_shared<OSC>(chars, savedValues, curSaveValue);
+            } else if (c == '[') {
+                st = std::make_shared<CSI>(chars, savedValues, curSaveValue);
+            } else {
+                //std::cout << c << " processing ansi stuff... " << std::endl;
             }
             break;
         }
         case UTF8_T: {
             st = std::make_shared<UTF8>(chars, savedValues, curSaveValue);
+            st->InternalAddChar(c);
             break;
         }
+        case NONE_T:
+            break;// not sure yet
     }
 
-    chars.push_back(c);
+    //if (st == nullptr)
+    //st->InternalAddChar(c);
+    //chars.push_back(c);
 }
 
 void Token::Clear() {
-    if (type == ANSI_T){
-        std::cout << " getting chars(except first size: " << chars.size() << ") > ";
-        for (int ccount = 1; ccount < chars.size(); ccount++){
-            std::cout << chars.at(ccount);
-        }
-        std::cout << std::endl;
+    if (st != nullptr) {
+        st->Activate();
     }
+
     type = NONE_T;
     chars.clear();
+    curSaveValue.clear();
+    savedValues.clear();
+
     st = nullptr;
 }
 

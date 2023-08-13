@@ -15,6 +15,10 @@ namespace Graphics {
     void Canvas_CairoPango::SetColor(double r, double g, double b) {
         cairo_set_source_rgb(CR, r, g, b);
     }
+    
+    void Canvas_CairoPango::SetColor(Color C){
+        cairo_set_source_rgb(CR, C.R/255.0, C.G/255.0, C.B/255.0);
+    }
 
     void Canvas_CairoPango::SetFont(std::string Font) {
         this->Font = Font;
@@ -46,5 +50,9 @@ namespace Graphics {
 
     void Canvas_CairoPango::SetSize(int width, int height) {
         cairo_xlib_surface_set_size(CS, width, height);
+    }
+
+    void Canvas_CairoPango::MoveTo(int x, int y){
+        cairo_move_to(CR, x, y);
     }
 }

@@ -16,10 +16,13 @@ namespace Graphics {
             Canvas_CairoPango(Display* display, Window window, Screen* screen, XRenderPictFormat* pictformat);
 
             void SetColor(double r, double g, double b) override;
+            void SetColor(Color C) override;
 
             void SetFont(std::string Font) override;
             DrawTextRet DrawText(int x, int y, std::string Text) override;
 
             void SetSize(int width, int height) override;
+
+            void MoveTo(int x, int y) override;
     };
 }

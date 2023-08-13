@@ -15,7 +15,7 @@
 #include "Graphics/Canvas.h"
 
 class ApplicationWindow {
-private:
+public:
     Display *display;
     Window window;
     XEvent event;
@@ -32,7 +32,8 @@ private:
 
     std::shared_ptr<Graphics::Canvas> CV;
 
-public:
     ApplicationWindow();
     void Start();
+
+    static ApplicationWindow W;
 };

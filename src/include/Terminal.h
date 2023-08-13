@@ -2,9 +2,11 @@
 
 #include "PT.h"
 #include "Token.h"
+#include "MFChar.h"
 
 #include <string>
 #include <array>
+#include <vector>
 #include <memory>
 
 #include <cairo/cairo-xlib-xrender.h>
@@ -13,16 +15,17 @@
 
 #include "Graphics/Canvas.h"
 
+#include "Cursor.h"
+
 class Terminal{
-private:
+public:
     PT pt;
 
     Token token;
 
-    int cursorX = 0;
-    int cursorY = 0;
+    MFCursor MFC;
 
-    std::array<std::string, 100> lines;
+    std::array<std::vector<MFChar>, 100> lines;
     int lineOffset = 0;
 
     int x = 0;
@@ -33,7 +36,6 @@ private:
     int scroll = 0; // the amount of lines scrolled down
     int deletedLines = 0;
    
-public:
     void PressChar(std::string inpString, int keysym, int status);
     void Draw(std::shared_ptr<Graphics::Canvas> CV);
     bool SetTermProperties(int _x, int _y, int _width, int _height);
