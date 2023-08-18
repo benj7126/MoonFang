@@ -81,17 +81,21 @@ bool Terminal::Update() {
         if (token.IsEnded()) {
             if (token.type == UTF8_T) {
                 // std::cout << "utf8; " << token.curSaveValue << std::endl;
+                /*
                 if (MFC.BracketedPasteMode){
                     lines[MFC.y].push_back(MFChar{"[", MFC});
                     MFC.x += 1;
                 }
+                */
 
                 lines[MFC.y].push_back(MFChar{token.curSaveValue, MFC});
 
+                /*
                 if (MFC.BracketedPasteMode){
                     lines[MFC.y].push_back(MFChar{"[", MFC});
                     MFC.x += 1;
                 }
+                */
 
                 MFC.x += 1;
             } else {
