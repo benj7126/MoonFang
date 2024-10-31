@@ -21,5 +21,6 @@ public:
     PT();
     char GetPTInput();
     void SendPTChars(char* s, size_t len);
+    void ChangeSize(int w, int h);
 
 };

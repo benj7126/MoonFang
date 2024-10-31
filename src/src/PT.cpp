@@ -1,5 +1,5 @@
 #include "PT.h"
-
+#include <string.h>
 
 // https://man7.org/linux/man-pages/man7/pty.7.html
 PT::PT() {
@@ -28,13 +28,15 @@ PT::PT() {
         dup2(slave, 2);
         close(slave);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
+        unsetenv("TERM");
+        setenv("TERM", "xterm", true);
+
+        // execl("/bin/nvim", "/bin/nvim", (char *) NULL);
         execl("/bin/bash", "/bin/bash", (char *) NULL);
         exit(1);
         return;
-    } else if (p > 0) {// parent process
-        close(slave);
     }
 
     pfd.fd     = master;
@@ -44,6 +46,16 @@ PT::PT() {
 void PT::SendPTChars(char *s, size_t len) {
     write(master, s, len);
     //(master, &buf, 1);
+}
+
+void PT::ChangeSize(int cols, int rows) {
+    struct winsize ws;
+
+    ws.ws_row = rows;
+    ws.ws_col = cols;
+    if (ioctl(slave, TIOCSWINSZ, &ws) < 0)  {
+        std::cout << "Failed to window size: " << strerror(errno) << std::endl;
+    }
 }
 
 char PT::GetPTInput() {

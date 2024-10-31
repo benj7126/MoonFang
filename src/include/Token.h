@@ -23,7 +23,7 @@ public:
 
     Token();
     void AddChar(char c);
-    void Clear();
+    bool Clear();
     bool IsEnded();
     
 };

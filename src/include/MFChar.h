@@ -1,21 +1,22 @@
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "Color.h"
 #include "Cursor.h"
 
-#include "Graphics/Canvas.h"
+#include "Graphics/CoreXFTDraw.h"
 
 class MFChar{
-private:
-    Color foregroundColor;
-    Color backgroundColor;
-
-    std::string text;
-
 public:
-    MFChar(std::string chars, MFCursor &cursor);
-    void Draw(std::shared_ptr<Graphics::Canvas> CV, int x, int y);
+    unsigned int foregroundColor = 0;
+    unsigned int backgroundColor = 0;
+    bool useBackground = false;
+
+    XftChar32 value = ' ';
+
+    MFChar(XftChar32 chars);
+    MFChar();
 };

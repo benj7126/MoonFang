@@ -1,0 +1,13 @@
+Folder:
+    Want a hidden folder / the ability to make a hidden folder to store extra data about each directory.
+
+
+Whitelist programs at spicifc paths:
+    When you are within a path or a subdirectory of that path, you can enable a whitelist making only certain commands executable.
+    Also needs a command to ignore this / swap on or off this.
+
+    Maby multiple modes or addition modes, so you can have a whitelist of executable commands and another one of autocorrecting commands.
+
+    Could be something like, in a cpp folder, make only cmake executable (or auto correctable) and therefore always make that auto correct.
+
+    Probably make a hidden file for this, and for that sake have a hidden folder for all MoonFang.

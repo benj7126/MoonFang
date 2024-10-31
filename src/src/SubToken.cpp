@@ -15,19 +15,16 @@ SplitCommand SubToken::GetSplitCommand(){
     for (char c : chars){
         if (c == ';' || c == command.type){
             Argument arg{};
-            arg.svalue = CharSaver;
+            arg.text = CharSaver;
             CharSaver.clear();
 
-            if (arg.svalue.size() == 0){
-                arg.ivalue = 0;
-            }
-            else{
+            if (arg.text.size() != 0){
                 if (IsInt)
-                    arg.ivalue = stoi(arg.svalue);
+                    arg.setValue(stoi(arg.text));
             }
 
             IsInt = true;
-            command.arguments.push_back(arg);
+            command.pushArgument(arg);
         } else{
             CharSaver += c;
 

@@ -1,14 +1,15 @@
 #include "ApplicationWindow.h"
 
 #include <array>
-#include <cairo/cairo-xlib.h>
 #include <cstdio>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <string>
 
-#include "Graphics/CairoPango/Canvas_CairoPango.h"
+#include "Terminal.h"
+
+#include "Graphics/CoreXFTDraw.h"
 
 unsigned long _RGB(int r, int g, int b) { return b + (g << 8) + (r << 16); }
 
@@ -27,12 +28,14 @@ ApplicationWindow::ApplicationWindow() {
     XVisualInfo vinfo;
     XMatchVisualInfo(display, DefaultScreen(display), 32, TrueColor, &vinfo);
 
+    int screen = DefaultScreen(display);
+
     XSetWindowAttributes attr;
-    attr.colormap         = XCreateColormap(display, DefaultRootWindow(display), vinfo.visual, AllocNone);
+    attr.colormap         = XCreateColormap(display, RootWindow(display, screen), vinfo.visual, AllocNone);
     attr.border_pixel     = 0;
     attr.background_pixel = 0;
 
-    window = XCreateWindow(display, DefaultRootWindow(display), 0, 0, 300, 200, 0, vinfo.depth, InputOutput, vinfo.visual, CWColormap | CWBorderPixel | CWBackPixel, &attr);
+    window = XCreateWindow(display, RootWindow(display, screen), 0, 0, 300, 200, 0, vinfo.depth, InputOutput, vinfo.visual, CWColormap | CWBorderPixel | CWBackPixel, &attr);
     //window = XCreateSimpleWindow(display, RootWindow(display, s), 0, 0, 100, 100, 1, BlackPixel(display, s), WhitePixel(display, s));
 
     XSelectInput(display, window, ExposureMask | ButtonPressMask | StructureNotifyMask | KeyPressMask | KeyReleaseMask);
@@ -48,31 +51,42 @@ ApplicationWindow::ApplicationWindow() {
 
     XSetICFocus(ic);
 
-
     DeleteWindowMessage = XInternAtom(display, "WM_DELETE_WINDOW", False);
     XSetWMProtocols(display, window, &DeleteWindowMessage, 1);
 
     XWindowAttributes WinAttr;
     XGetWindowAttributes(display, window, &WinAttr);
     gc     = XCreateGC(display, window, 0, NULL);
-    buffer = XCreatePixmap(display, window, 10000, 10000, vinfo.depth);
-    CV     = std::make_shared<Graphics::Canvas_CairoPango>(display, buffer, WinAttr.screen, XRenderFindStandardFormat(display, PictStandardARGB32));
+    buffer = XCreatePixmap(display, window, 1920, 1080, vinfo.depth); // width and height to be changed so that it handles automatically
+    CV     = {display, window, buffer, vinfo.visual, attr.colormap, screen, gc};
 
     //pt = {ConnectionNumber(display)};
 }
 
 void ApplicationWindow::Start() {
-    bool reDraw      = true;
+    bool redraw = false;
     bool KeepRunning = true;
     XWindowAttributes attr;
+    
+    Terminal::term.CV = &CV;
+
+    std::cout << "test" << std::endl;
+
+    // XGetWindowAttributes(display, window, &attr);
+    // XClearArea(display, window, 0, 0, attr.width, attr.height, false);
     while (KeepRunning) {
+        // std::cout << (char)Terminal::term.lines[0][0].value << std::endl;
         XGetWindowAttributes(display, window, &attr);
-        if (t.SetTermProperties(attr.x, attr.y, attr.width, attr.height)) {
-            reDraw = true;
+        if (Terminal::term.SetTermProperties(attr.x, attr.y, attr.width, attr.height)) {
+            redraw = true;
         }
 
-        if (t.Update())
-            reDraw = true;
+        XGetWindowAttributes(display, window, &attr);
+
+        if (Terminal::term.Update())
+            redraw = true;
+
+        XGetWindowAttributes(display, window, &attr);
 
         while (XPending(display)) {
             XNextEvent(display, &event);
@@ -82,7 +96,11 @@ void ApplicationWindow::Start() {
 
             switch (event.type) {
                 case Expose: {
-                    CV->SetSize(event.xexpose.width, event.xexpose.height);
+                    redraw = true; // TODO: make it draw only area within event.xexpose.width, event.xexpose.height
+                    break;
+                }
+                case ConfigureNotify: {
+                    Terminal::term.ChangeSize(event.xconfigure.width, event.xconfigure.height);
                     break;
                 }
                 case KeyPress: {
@@ -107,10 +125,7 @@ void ApplicationWindow::Start() {
                     */
 
                     std::string conv = std::string{buf, (size_t) count};
-                    if (count > 0 && conv != "" && status == 4)
-                        t.PressChar(conv, (int) keysym, (int) status);
-
-                    reDraw = true;
+                    Terminal::term.PressChar(conv, keysym, (int) status);
                     break;
                 }
 
@@ -122,19 +137,27 @@ void ApplicationWindow::Start() {
             }
         }
 
-        if (reDraw) {
-            t.Draw(CV);
-            XCopyArea(display, buffer, window, gc, 0, 0, attr.width, attr.height, 0, 0);
-            //XClearArea(display, buffer, 0, 0, attr.width, attr.height, false);
+        XGetWindowAttributes(display, window, &attr);
+
+        if (redraw || true) {
+            CV.UseBuffer();
             XFillRectangle(display, buffer, gc, 0, 0, attr.width, attr.height);
-        } else {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100)); // this is slowing the program down, very little, idk if there is a smarter way to fix it though...
+            Terminal::term.Draw();
+            XCopyArea(display, buffer, window, gc, 0, 0, attr.width, attr.height, 0, 0); // for redrawing whole screen?
+            CV.UseWindow();
+
+            redraw = false;
+
+
+            // CV->EndDraw();
+            // XCopyArea(display, buffer, window, gc, 0, 0, attr.width, attr.height, 0, 0); // for redrawing whole screen?
+            // XClearArea(display, buffer, 0, 0, attr.width, attr.height, false);
+            // XFillRectangle(display, buffer, gc, 0, 0, attr.width, attr.height);
+        // } else {
         }
 
         //std::cout << charBuffer->size() << std::endl;
         //XDrawString(display, window, DefaultGC(display, s), 50, 50, t.str.c_str(), t.str.size());
-
-        reDraw = false;
     }
 
     XCloseDisplay(display);

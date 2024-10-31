@@ -16,11 +16,10 @@ if (${FORCE_COLORED_OUTPUT})
 endif ()
 
 find_package(X11 REQUIRED)
-find_package(Cairo REQUIRED)
-find_package(Pango REQUIRED)
-find_package(GLib REQUIRED)
-find_package(GObject REQUIRED)
-find_package(HarfBuzz REQUIRED)
+# find_package(GLib REQUIRED)
+# find_package(GObject REQUIRED)
+# find_package(HarfBuzz REQUIRED)
+find_package(Freetype REQUIRED)
 
 file(GLOB_RECURSE MoonFang_src
   "src/*.cpp"
@@ -35,6 +34,6 @@ set_target_properties(MoonFang PROPERTIES
   CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF)
 
-target_include_directories(MoonFang PRIVATE include ${X11_INCLUDE_DIR} ${Cairo_INCLUDE_DIRS} ${GLib_INCLUDE_DIRS} ${Pango_INCLUDE_DIR} ${HarfBuzz_INCLUDE_DIRS} ${GObject_INCLUDE_DIR})
+target_include_directories(MoonFang PRIVATE include ${X11_INCLUDE_DIR} ${X11_Xft_INCLUDE_PATH} ${FREETYPE_INCLUDE_DIRS})
 
-target_link_libraries(MoonFang ${X11_LIBRARIES} ${Cairo_LIBRARY} ${GLib_LIBRARY} ${Pango_LIBRARY} ${PangoCairo_LIBRARY} ${HarfBuzz_LIBRARIES} ${GObject_LIBRARY} Xrender)
+target_link_libraries(MoonFang ${X11_LIBRARIES} ${X11_Xft_LIB} ${FREETYPE_LIBRARIES} Xrender)

@@ -8,7 +8,7 @@ public:
         : SubToken(chars, savedValues, curSaveValue) {};
     bool IsDone() override;
     bool AddChar(char c) override;
-    void Activate() override;
+    bool Activate() override;
 
     int counter = 0;
 };

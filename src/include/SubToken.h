@@ -5,6 +5,8 @@
 
 #include <array>
 
+#include <iostream>
+
 #include "ApplicationWindow.h"
 
 struct between {
@@ -13,13 +15,35 @@ struct between {
 };
 
 struct Argument{
-    int ivalue;
-    std::string svalue;
+private:
+    int ivalue = -1;
+
+public:
+    void setValue(int inValue) {ivalue = inValue; } ;
+    int getValue(int defaultValue = 0) { return ivalue == -1 ? defaultValue : ivalue; } ;
+
+    std::string text;
 };
 
 struct SplitCommand{
+private:
     std::vector<Argument> arguments;
+
+public:
     char type;
+    void pushArgument(Argument a) {
+        arguments.push_back(a);
+    }
+
+    int trueArgCount() { return arguments.size(); };
+
+    Argument getArgument(int index) {
+        if (arguments.size() > index){
+            return arguments[index];
+        }
+
+        return {};
+    }
 };
 
 class SubToken {
@@ -46,9 +70,10 @@ public:
     void InternalAddChar(char c);
 
     SubToken(std::vector<char> &chars, std::vector<std::string> &savedValues, std::string &curSaveValue);
-    virtual bool AddChar(char c) { return true; } // if it returns true, it adds the char automatically
+    virtual bool AddChar(char c) {  return true; } // if it returns true, it adds the char automatically
     virtual bool IsDone() {
+        //return true;
         return stages.size() == stage;
     };
-    virtual void Activate(){};
+    virtual bool Activate(){return false;};
 };

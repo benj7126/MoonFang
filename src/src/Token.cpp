@@ -35,7 +35,7 @@ void Token::AddChar(char c) {
             } else if (c == '[') {
                 st = std::make_shared<CSI>(chars, savedValues, curSaveValue);
             } else {
-                //std::cout << c << " processing ansi stuff... " << std::endl;
+                // std::cout << c << " | " << (int)c << " | potentially missing ansi type" << std::endl;
             }
             break;
         }
@@ -53,9 +53,10 @@ void Token::AddChar(char c) {
     //chars.push_back(c);
 }
 
-void Token::Clear() {
+bool Token::Clear() {
+    bool termChange = false;
     if (st != nullptr) {
-        st->Activate();
+        termChange = st->Activate();
     }
 
     type = NONE_T;
@@ -64,11 +65,14 @@ void Token::Clear() {
     savedValues.clear();
 
     st = nullptr;
+
+    return termChange;
 }
 
 bool Token::IsEnded() {
-    if (st != nullptr && st->IsDone())
+    if (st != nullptr && st->IsDone()){
         return true;
+    }
     /* std::cout << type << " | " << chars.size() << std::endl; */
     /* switch (type) { */
     /*     case UTF8: { */

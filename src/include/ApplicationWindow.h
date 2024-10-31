@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Terminal.h"
-
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <stdio.h>
@@ -12,7 +10,7 @@
 #include <vector>
 #include <memory>
 
-#include "Graphics/Canvas.h"
+#include "Graphics/CoreXFTDraw.h"
 
 class ApplicationWindow {
 public:
@@ -27,10 +25,9 @@ public:
     XIM im;
     XIC ic;
 
-    Terminal t;
     Atom DeleteWindowMessage;
 
-    std::shared_ptr<Graphics::Canvas> CV;
+    Graphics::CoreXFTDraw CV;
 
     ApplicationWindow();
     void Start();

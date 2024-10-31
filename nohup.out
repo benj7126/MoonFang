@@ -1,0 +1,6 @@
+[ 03/06/2024 08:34:42.339 parse_config_libconfig WARN ] The refresh-rate option has been deprecated. Please remove it from your configuration file. If you encounter any problems without this feature, please feel free to open a bug report
+[ 03/06/2024 08:48:51.369 parse_config_libconfig WARN ] The refresh-rate option has been deprecated. Please remove it from your configuration file. If you encounter any problems without this feature, please feel free to open a bug report
+[ 03/06/2024 08:48:51.370 session_init FATAL ERROR ] Another composite manager is already running
+[ 03/06/2024 08:48:58.449 parse_config_libconfig WARN ] The refresh-rate option has been deprecated. Please remove it from your configuration file. If you encounter any problems without this feature, please feel free to open a bug report
+XIO:  fatal IO error 104 (Connection reset by peer) on X server ":0"
+      after 4363968 requests (4363923 known processed) with 0 events remaining.

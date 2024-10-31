@@ -1,0 +1,67 @@
+#!/bin/sh
+
+printf "\e[H"
+printf "\e[J"
+printf "Test 1:\n"
+printf "This is how its supposed to look\n"
+printf "This is how its supposed to lo  \e[2Dok\n"
+
+if [[ $1 == 1 ]]
+then
+    exit
+fi
+
+printf "\nTest 2:\n"
+printf "This is how its supposed to look\n"
+printf "This is how its \nignore this, its just for another line\e[7;17Hsupposed to look"
+
+printf "\e[E"
+printf "\e[2E"
+
+if [[ $1 == 2 ]]
+then
+    exit
+fi
+
+printf "Test 3:\n"
+printf "This is how its supposed to look\n"
+printf "This\e[Cis\e[Chow\e[Cits\e[Csupposed\e[Cto\e[Clook\n"
+
+if [[ $1 == 3 ]]
+then
+    exit
+fi
+
+printf "\nTest 4:\n"
+printf "Looks      two       this     \n"
+printf "      with     lines      time\n\n"
+printf "Looks \e[Bwith \e[Atwo \e[Blines \e[Athis \e[Btime\n"
+
+if [[ $1 == 4 ]]
+then
+    exit
+fi
+
+printf "\nTest 5:\n"
+printf "Pooking alright\n"
+printf "Looking alright\n\e[FPoo\n"
+
+if [[ $1 == 5 ]]
+then
+    exit
+fi
+
+printf "\nTest 6:\n"
+printf "Just a biiiiiiiiiiiiig space    but with text     like so...\n"
+printf "Just a biiiiiiiiiiiiig space                      like so...\e[28Dbut with text\n"
+
+if [[ $1 == 6 ]]
+then
+    exit
+fi
+
+printf "\nTest 7:\n"
+printf "Another                                   space\n"
+printf "Another\e[35Cspace\n"
+
+printf "\e[E"

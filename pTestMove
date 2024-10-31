@@ -1,0 +1,15 @@
+#!/bin/sh
+
+printf "\e[H"
+printf "\e[J"
+printf "Test 1:\n"
+printf "This is how its supposed to look\n"
+printf "This is how its supposed to lo  \e[2Dok\n"
+
+printf "\nTest 2:\n"
+printf "This is how its supposed to look\n"
+printf "This is how its \nignore this, its just for another line\e[7;17Hsupposed to look"
+
+printf "\e[E"
+printf "\e[2E"
+
